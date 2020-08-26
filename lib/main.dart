@@ -4,17 +4,23 @@ import 'package:personal_expense_app/widgets/new_transaction.dart';
 import 'models/transaction.dart';
 import './widgets/transaction_list.dart';
 
-void main() => runApp(MaterialApp(
-      home: MyApp(),
-      title: 'Personal Expenses App',
-      theme: ThemeData(
-          primarySwatch: Colors.green,
-          accentColor: Colors.amber,
-          fontFamily: 'Quicksand',
-          textTheme: TextTheme(
-              headline6: TextStyle(fontSize: 20),
-              button: TextStyle(color: Colors.white))),
-    ));
+void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown]);
+  runApp(MaterialApp(
+    home: MyApp(),
+    title: 'Personal Expenses App',
+    theme: ThemeData(
+        primarySwatch: Colors.green,
+        accentColor: Colors.amber,
+        fontFamily: 'Quicksand',
+        textTheme: TextTheme(
+            headline6: TextStyle(fontSize: 20),
+            button: TextStyle(color: Colors.white))),
+  ));
+}
 
 class MyApp extends StatefulWidget {
   // String titleInput;
@@ -32,6 +38,7 @@ class _MyAppState extends State<MyApp> {
     Transaction(
         id: 't2', title: 'New Phone', amount: 400.5, date: DateTime.now())
   ];
+  bool _showChart = false;
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
@@ -73,6 +80,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text('Personal Expenses'),
       actions: <Widget>[
@@ -82,6 +90,13 @@ class _MyAppState extends State<MyApp> {
         )
       ],
     );
+    final txListWidget = Container(
+                child: TransactionList(_userTransactions, _deleteTransaction),
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.7,
+              );
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -89,18 +104,36 @@ class _MyAppState extends State<MyApp> {
             //mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Container(
+              if(isLandscape) Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Show Chart'),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val){
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  )
+                ],
+              ),
+              if(!isLandscape) Container(
                 child: Chart(_recentTransactions),
                 height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height - MediaQuery.of(context).padding.top) *
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
                     0.3,
               ),
-              Container(
-                child: TransactionList(_userTransactions, _deleteTransaction),
+              if(!isLandscape) txListWidget,
+              if(isLandscape) _showChart ?Container(
+                child: Chart(_recentTransactions),
                 height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height - MediaQuery.of(context).padding.top ) *
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
                     0.7,
-              )
+              ):
+              txListWidget
             ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

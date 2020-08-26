@@ -15,7 +15,7 @@ class _NewTransactionState extends State<NewTransaction> {
   DateTime _selectedDate;
 
   void submitData() {
-    if(amountController.text.isEmpty){
+    if (amountController.text.isEmpty) {
       return;
     }
     final enteredTitle = titleController.text;
@@ -23,7 +23,7 @@ class _NewTransactionState extends State<NewTransaction> {
     if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
       return;
     }
-    widget.inputHandler(enteredTitle, enteredAmount,_selectedDate);
+    widget.inputHandler(enteredTitle, enteredAmount, _selectedDate);
     Navigator.of(context).pop();
   }
 
@@ -45,8 +45,12 @@ class _NewTransactionState extends State<NewTransaction> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10.0),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+            top: 10,
+            right: 10,
+            left: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
