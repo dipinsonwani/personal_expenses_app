@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
   final List<Transaction> _userTransactions = [
     Transaction(id: 't1', title: 'New ', amount: 99.2, date: DateTime.now()),
     Transaction(
-       id: 't2', title: 'New Phone', amount: 400.5, date: DateTime.now())
+        id: 't2', title: 'New Phone', amount: 400.5, date: DateTime.now())
   ];
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -38,7 +38,8 @@ class _MyAppState extends State<MyApp> {
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount,DateTime chosenDate) {
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
         title: txTitle,
         amount: txAmount,
@@ -55,40 +56,53 @@ class _MyAppState extends State<MyApp> {
         context: ctx,
         builder: (_) {
           return GestureDetector(
-              onTap: () {},
-              child:NewTransaction(
-            _addNewTransaction,
+            onTap: () {},
+            child: NewTransaction(
+              _addNewTransaction,
             ),
             behavior: HitTestBehavior.opaque,
           ); //GestureDetector and behaviour used so that the Modal sheet doesnt close after tapping on it.
         });
   }
-  void _deleteTransaction (String id){
+
+  void _deleteTransaction(String id) {
     setState(() {
       _userTransactions.removeWhere((tx) => tx.id == id);
     });
-    
-
   }
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => startAddNewTransaction(context),
+        )
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => startAddNewTransaction(context),
-          )
-        ],
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: Column(
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                child: Chart(_recentTransactions),
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height - MediaQuery.of(context).padding.top) *
+                    0.3,
+              ),
+              Container(
+                child: TransactionList(_userTransactions, _deleteTransaction),
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height - MediaQuery.of(context).padding.top ) *
+                    0.7,
+              )
+            ]),
       ),
-      body: Column(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Chart(_recentTransactions),
-            TransactionList(_userTransactions, _deleteTransaction)
-          ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => startAddNewTransaction(context),
