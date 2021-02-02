@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+![ezgif com-gif-maker (5)](https://user-images.githubusercontent.com/55944433/106576824-96235e00-6563-11eb-8c04-cd622234bd5c.gif)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
